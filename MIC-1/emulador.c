@@ -82,7 +82,7 @@ void freeproc(processador *p)
     }   
 }
 
-//define qual registrador será usado no barramento B
+//Define qual registrador será usado no barramento B
 void setbus(processador *p, b_8bits B)
 {
     if(p != NULL)
@@ -397,7 +397,8 @@ void executar(processador *p)
     3 - Analisa os argumentos da linha de comando para conferir se 
         os arquivos sao microprog.rom e prog.exe, independentemente da ordem
     4 - carrega microprog.rom e prog.exe
-    5 - Inicia a execucao do programa. */
+    5 - Inicia a execucao do programa.
+    6 - Libera o processador da memoria */
 int main(int argc, char *argv[])
 {
     if(argc == 3 && argv[1] != argv[2])
