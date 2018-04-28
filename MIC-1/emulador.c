@@ -94,9 +94,9 @@ void setbus(processador *p, b_8bits B)
                 break;
             case 1: p->B = p->PC;
                 break;
-            case 2: p->B = p->MBR;
+            case 2: p->B = (signed int)p->MBR;
                 break;
-            case 3: p->B = (signed int)p->MBR;
+            case 3: p->B = p->MBR;
                 break;
             case 4: p->B = p->SP;
                 break;
@@ -317,16 +317,16 @@ void loadmicroprog(processador *p, char *microprog)
 
 /* Calcula o numero de variaveis do programa executado.
    OBS: O calculo e feito de acordo com o valor maximo entre 
-   as variaveis encontradas apos instrucoes ILOAD, pois 
-   uma instrucao ILOAD admite uma variavel x para colocar
-   no topo da pilha de execucao. */
+   as variaveis encontradas apos instrucoes ILOAD ou ISTORE, pois 
+   essas instrucoes admitem uma variavel x para colocar
+   ou remover no topo da pilha de execucao. */
 int calcvar(char *prog, int tam)
 {
     int counter = 0;
     int max = -1;
     for(int i = 0; i < tam; i++)
     {
-        if(((int)prog[i] ==  0x1C) && (i < tam - 1))
+        if((((int)prog[i] ==  0x1C) || (int)prog[i] == 0x22) && (i < tam - 1))
             if((int)prog[i + 1] > max)
             {
                 max = (int)prog[i + 1];
@@ -405,13 +405,13 @@ int main(int argc, char *argv[])
     {
         b_8bits *memoria = (b_8bits*)calloc(8192, sizeof(b_8bits));
         processador *p = newproc(memoria);
-        if(strcmp(argv[1], "microprog.rom") == 0 && strcmp(argv[2], "prog.exe") == 0)
+        if(strstr(argv[1], ".rom") != NULL && strstr(argv[2], ".exe") != NULL)
         {
             loadmicroprog(p, argv[1]);
             loadprog(p, argv[2]);
             executar(p);
         }
-        if(strcmp(argv[1], "prog.exe") == 0 && strcmp(argv[2], "microprog.rom") == 0)
+        if(strstr(argv[1], ".exe") != NULL && strstr(argv[2], ".rom") != NULL)
         {
             loadmicroprog(p, argv[2]);
             loadprog(p, argv[1]);
