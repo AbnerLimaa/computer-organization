@@ -54,6 +54,9 @@ void freeass(assembler *a)
     }
 }
 
+/* Recebe uma string qualquer e a decodifica.
+   Retorna o byte correspondente se a string for uma instrucao
+   ou retorna 0x00 caso contrario. */
 int decodificar(char *inst)
 {
     if(inst != NULL)
@@ -102,6 +105,8 @@ int decodificar(char *inst)
     return 0x00;
 }
 
+/* Recebe uma instrucao decodificada e retorna a quantidade
+   de bytes necessarios. */
 int calcbytesop(int inst)
 {
     if(inst == 0x02 || inst == 0x0E || inst == 0x08 || inst == 0x0B || inst == 0x6B || inst == 0x05 || inst == 0x01 || inst == 0x10 || inst == 0x13 || inst == 0x28)
@@ -113,6 +118,8 @@ int calcbytesop(int inst)
     return 0;
 }
 
+/* Dado um label (offset) e a sua posicao no vetor ling_assembly,
+   calcula quantos bytes de salto serao necessarios. */
 int calcularsalto(assembler *a, char *offset, int i)
 {
     if(offset != NULL && a != NULL && i >= 0 && i < a->n_assembly)
@@ -132,6 +139,7 @@ int calcularsalto(assembler *a, char *offset, int i)
     return -1;
 }
 
+// Retorna o inteiro correspondente a string passada como parametro
 int transformarint(char *valor)
 {
     if(valor != NULL)
@@ -148,6 +156,9 @@ int transformarint(char *valor)
     return -1;
 }
 
+/* Procura uma variavel no vetor variaveis.
+   Retorna o indice da variavel no vetor se a encontra
+   ou -1 caso contrario. */
 int procurarvar(assembler *a, char var)
 {
     if(a != NULL && a->variaveis != NULL && (int)var >= 97 && (int)var <= 122)
@@ -167,6 +178,7 @@ int procurarvar(assembler *a, char var)
     return -1;
 }
 
+// Armazena uma instrucao decodificada em ling_maquina
 void armazenarinst(assembler *a, int inst)
 {
     if(a != NULL)
@@ -184,6 +196,7 @@ void armazenarinst(assembler *a, int inst)
     }
 }
 
+// Armazena uma variavel nova no vetor variaveis
 void armazenarvar(assembler *a, char var)
 {
     if(a != NULL && a->ling_maquina != NULL)
@@ -195,6 +208,8 @@ void armazenarvar(assembler *a, char var)
     }
 }
 
+/* Armazena a operacao ou o operando (componente) no vetor ling_assembly.
+   a componente e armazenada como string, pois ainda nao foi decodificada. */
 void armazenarcomp(assembler *a, char *comp)
 {
     if(a != NULL && comp != NULL)
@@ -208,6 +223,9 @@ void armazenarcomp(assembler *a, char *comp)
     }
 }
 
+/* Separa o vetor de caracteres char_arquivo em varias strings
+   representando operacoes e operandos (componentes).
+   Armazena o resultado em ling_assembly. */
 void separarcomp(assembler *a)
 {
     if(a != NULL)
@@ -233,6 +251,9 @@ void separarcomp(assembler *a)
     }
 }
 
+/* Traduz os operandos e operacoes de ling_assembly e os armazena 
+   em ling_maquina. Ao termino dessa funcao o vetor ling_maquina
+   possui o programa montado. */
 void traduzircomp(assembler *a)
 {
     if(a != NULL)
@@ -284,6 +305,11 @@ void traduzircomp(assembler *a)
     }
 }
 
+/* Grava o resultado da montagem em um arquivo de saida seguindo
+   o padrao:
+   1 - 4 bytes com o tamanho do arquivo;
+   2 - 20 bytes responsaveis por inicializar o emulador;
+   3 - programa montado retirado de ling_maquina. */
 void gravararquivo(assembler *a)
 {
     if(a != NULL)
@@ -310,6 +336,11 @@ void gravararquivo(assembler *a)
     }
 }
 
+/* Controla o processo de montagem do programa:
+   1 - le todos os caracteres e os armazena em char_arquivo;
+   2 - separa as strings de char_arquivo e as armazena em ling_assembly;
+   3 - traduz as strings de ling_assembly e armazena o programa 
+       resultante em ling_maquina. */
 void montar(assembler *a, FILE *prog)
 {
     if(a != NULL && prog != NULL)
@@ -325,6 +356,7 @@ void montar(assembler *a, FILE *prog)
     }
 }
 
+//Nomeia o arquivo de saida com o mesmo arquivo de entrada
 void nomearprog(assembler *a, char *programa)
 {
     if(a != NULL && programa != NULL)
